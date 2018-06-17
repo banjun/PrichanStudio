@@ -19,6 +19,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     }
 
     let faceImageView = UIImageView(image: UIImage(named: "face")!)
+    let skirtImageView = UIImageView(image: UIImage(named: "skirt")!)
 
     let poseNetModel = try! VNCoreMLModel(for: posenet337().model)
     private lazy var poseNetRequest: VNCoreMLRequest = {
@@ -89,6 +90,18 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
                     .applying(transform)
                 self.faceImageView.transform = CGAffineTransform(scaleX: estimatedScale, y: estimatedScale)
             }
+
+            // Each Hip may be in connected key points
+            let adjacentKeypoints = getAdjacentKeyPoints(keypoints: pose.keypoints, minConfidence: 0.01)
+            guard let leftHip = (adjacentKeypoints.flatMap {$0}.first {$0.part == "leftHip"}) else { return }
+            guard let rightHip = (adjacentKeypoints.flatMap {$0}.first {$0.part == "rightHip"}) else { return }
+
+            NSLog("%@", "\(String(describing: (leftHip, rightHip)))")
+
+            self.skirtImageView.center = CGPoint(
+                x: CGFloat(leftHip.position.x + rightHip.position.x) / 2,
+                y: CGFloat(leftHip.position.y + rightHip.position.y) / 2)
+                .applying(transform)
         }
     }
 
@@ -101,6 +114,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         super.viewDidLoad()
 
         view.addSubview(faceImageView)
+        view.addSubview(skirtImageView)
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -147,6 +161,25 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         } catch {
             NSLog("%@", "handler.perform throws: \(error)")
         }
+    }
+}
+
+// copied from PoseNet-CoreML
+extension ViewController {
+    func getAdjacentKeyPoints(
+        keypoints: [Keypoint], minConfidence: Float)-> [[Keypoint]] {
+
+        return connectedPartIndices.filter {
+            !eitherPointDoesntMeetConfidence(
+                keypoints[$0.0].score,
+                keypoints[$0.1].score,
+                minConfidence)
+            }.map { [keypoints[$0.0],keypoints[$0.1]] }
+    }
+
+    func eitherPointDoesntMeetConfidence(
+        _ a: Float,_ b: Float,_ minConfidence: Float) -> Bool {
+        return (a < minConfidence || b < minConfidence)
     }
 }
 
