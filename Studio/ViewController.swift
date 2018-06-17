@@ -5,6 +5,7 @@ import Vision
 private let poseNet = PoseNet()
 private let modelSize = CGSize(width: 337, height: 337) // see posenet337.mlmodel input
 private let referenceEyeDistance: CGFloat = 320
+private let referenceHipWidth: CGFloat = 110
 
 class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDelegate {
     var cameraSession: AVCaptureSession?
@@ -65,9 +66,9 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             let rotation: CGFloat = {
                 switch orientation {
                 case .landscapeLeft: return -.pi / 2
-                case .portrait: return 0
+                case .portrait: return .pi
                 case .landscapeRight: return .pi / 2
-                case .portraitUpsideDown: return .pi
+                case .portraitUpsideDown: return 0
                 }
             }()
 
@@ -96,12 +97,24 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             guard let leftHip = (adjacentKeypoints.flatMap {$0}.first {$0.part == "leftHip"}) else { return }
             guard let rightHip = (adjacentKeypoints.flatMap {$0}.first {$0.part == "rightHip"}) else { return }
 
-            NSLog("%@", "\(String(describing: (leftHip, rightHip)))")
+//            NSLog("%@", "\(String(describing: (leftHip, rightHip)))")
+            let hipWidth = CGFloat(sqrt(pow(leftHip.position.x - rightHip.position.x, 2) +
+                pow(leftHip.position.y - rightHip.position.y, 2)))
+            let estimatedSkirtScale = max(0.7, min(1.5,
+                                                   hipWidth / min(modelSize.width, modelSize.height))
+                * (skirtImageView.intrinsicContentSize.width / referenceHipWidth))
+            let transformedLeftHipPosition = CGPoint(x: CGFloat(leftHip.position.x), y: CGFloat(leftHip.position.y)).applying(transform)
+            let transformedRightHipPosition = CGPoint(x: CGFloat(rightHip.position.x), y: CGFloat(rightHip.position.y)).applying(transform)
+            let angle: CGFloat = 0 //CGFloat(atan2(transformedLeftHipPosition.y - transformedRightHipPosition.y,
+                          //            transformedLeftHipPosition.x - transformedRightHipPosition.x)) - .pi
 
-            self.skirtImageView.center = CGPoint(
-                x: CGFloat(leftHip.position.x + rightHip.position.x) / 2,
-                y: CGFloat(leftHip.position.y + rightHip.position.y) / 2)
-                .applying(transform)
+            UIView.animate(withDuration: 0.1) {
+                self.skirtImageView.center = CGPoint(
+                    x: CGFloat(leftHip.position.x + rightHip.position.x) / 2,
+                    y: CGFloat(leftHip.position.y + rightHip.position.y) / 2)
+                    .applying(transform)
+                self.skirtImageView.transform = CGAffineTransform(scaleX: estimatedSkirtScale, y: estimatedSkirtScale).rotated(by: angle)
+            }
         }
     }
 
@@ -146,6 +159,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         session.addInput(input)
         session.addOutput(output)
         previewLayer = AVCaptureVideoPreviewLayer(session: session)
+        previewLayer?.videoGravity = .resizeAspectFill
         cameraSession = session
 
         session.startRunning()
