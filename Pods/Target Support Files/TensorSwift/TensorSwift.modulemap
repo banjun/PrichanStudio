@@ -1,0 +1,6 @@
+framework module TensorSwift {
+  umbrella header "TensorSwift-umbrella.h"
+
+  export *
+  module * { export * }
+}
