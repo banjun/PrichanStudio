@@ -1,16 +1,20 @@
 PODS:
   - TensorSwift (0.2.2)
+  - "※ikemen (0.5.0)"
 
 DEPENDENCIES:
   - TensorSwift
+  - "※ikemen"
 
 SPEC REPOS:
   https://github.com/CocoaPods/Specs.git:
     - TensorSwift
+    - "※ikemen"
 
 SPEC CHECKSUMS:
   TensorSwift: 09217b0fb41272c6a178ba50b4bb01f2d10d88be
+  "※ikemen": 0cf85af52790db21a846ad31abca356e99da1ffb
 
-PODFILE CHECKSUM: ff414b48c63bf07c75afb2a06678455ce9b31634
+PODFILE CHECKSUM: 99c7acb050835b69e5b798fa56e6c1453c7ec5d1
 
 COCOAPODS: 1.5.0

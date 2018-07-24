@@ -3,4 +3,6 @@ use_frameworks!
 
 target 'Studio' do
   pod 'TensorSwift'
+
+  pod '※ikemen'
 end

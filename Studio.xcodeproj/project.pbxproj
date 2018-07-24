@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		12B0202BB7F6EF917C648981 /* Pods_Studio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 973A8CDE792ED5B693167F53 /* Pods_Studio.framework */; };
+		EA0F49DB2101F3B400A1791F /* HeatmapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA0F49DA2101F3B400A1791F /* HeatmapViewController.swift */; };
 		EA19444120D60B3F00879630 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA19444020D60B3F00879630 /* AppDelegate.swift */; };
 		EA19444320D60B3F00879630 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA19444220D60B3F00879630 /* ViewController.swift */; };
 		EA19444820D60B4200879630 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EA19444720D60B4200879630 /* Assets.xcassets */; };
@@ -27,6 +28,7 @@
 		2BD300B24795C861C090AB8A /* Pods-Studio.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Studio.release.xcconfig"; path = "Pods/Target Support Files/Pods-Studio/Pods-Studio.release.xcconfig"; sourceTree = "<group>"; };
 		973A8CDE792ED5B693167F53 /* Pods_Studio.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Studio.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9DF80DDBE63A9F97C03F059E /* Pods-Studio.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Studio.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Studio/Pods-Studio.debug.xcconfig"; sourceTree = "<group>"; };
+		EA0F49DA2101F3B400A1791F /* HeatmapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeatmapViewController.swift; sourceTree = "<group>"; };
 		EA19443D20D60B3F00879630 /* Studio.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Studio.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		EA19444020D60B3F00879630 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		EA19444220D60B3F00879630 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -97,6 +99,7 @@
 			children = (
 				EA19444020D60B3F00879630 /* AppDelegate.swift */,
 				EA19444220D60B3F00879630 /* ViewController.swift */,
+				EA0F49DA2101F3B400A1791F /* HeatmapViewController.swift */,
 				EA19444720D60B4200879630 /* Assets.xcassets */,
 				EA19444920D60B4200879630 /* LaunchScreen.storyboard */,
 				EA19444C20D60B4200879630 /* Info.plist */,
@@ -196,10 +199,12 @@
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-Studio/Pods-Studio-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/TensorSwift/TensorSwift.framework",
+				"${BUILT_PRODUCTS_DIR}/※ikemen/Ikemen.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/TensorSwift.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Ikemen.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -240,6 +245,7 @@
 				EA19445E20D62AA000879630 /* Commont.swift in Sources */,
 				EA19446220D62B5700879630 /* PriorityQueue.swift in Sources */,
 				EA19445820D6289E00879630 /* DecodePose.swift in Sources */,
+				EA0F49DB2101F3B400A1791F /* HeatmapViewController.swift in Sources */,
 				EA19445320D60FCE00879630 /* posenet337.mlmodel in Sources */,
 				EA19446420D62B6600879630 /* Heap.swift in Sources */,
 			);
@@ -381,13 +387,10 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = FPZK4WRGW7;
 				INFOPLIST_FILE = Studio/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = jp.banjun.Studio;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -400,13 +403,10 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = FPZK4WRGW7;
 				INFOPLIST_FILE = Studio/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = jp.banjun.Studio;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;

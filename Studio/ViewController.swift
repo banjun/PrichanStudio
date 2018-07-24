@@ -22,6 +22,8 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     let faceImageView = UIImageView(image: UIImage(named: "face")!)
     let skirtImageView = UIImageView(image: UIImage(named: "skirt")!)
 
+    
+
     let poseNetModel = try! VNCoreMLModel(for: posenet337().model)
     private lazy var poseNetRequest: VNCoreMLRequest = {
         let req = VNCoreMLRequest(model: poseNetModel) { request, error in
@@ -38,6 +40,19 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
                 displacementsBwd: getTensor(values[3]),
                 outputStride: 16, maxPoseDetections: 15,
                 scoreThreshold: 0.5,nmsRadius: 20)
+
+            let heatmaps = values[1]
+            self.heatmapViewController.heatmaps = Heatmaps(parts: (0..<17).map { i in
+                var data: [[Double]] = []
+                for y in 0..<22 {
+                    var row: [Double] = []
+                    for x in 0..<22 {
+                        row.append(heatmaps[[NSNumber(value: i), NSNumber(value: x), NSNumber(value: y)]].doubleValue)
+                    }
+                    data.append(row)
+                }
+                return data
+                }.map {Heatmaps.Part(data: $0, name: "(name)")})
 
 //            let output = posenet337Output(
 //                heatmap__0: values[0],
@@ -126,8 +141,8 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        view.addSubview(faceImageView)
-        view.addSubview(skirtImageView)
+//        view.addSubview(faceImageView)
+//        view.addSubview(skirtImageView)
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -144,6 +159,8 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         super.viewDidLayoutSubviews()
         previewLayer?.frame = view.layer.bounds
     }
+
+    let heatmapViewController = HeatmapViewController()
 
     private func setupCameraSession() {
         guard cameraSession == nil else { return }
@@ -163,10 +180,16 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         cameraSession = session
 
         session.startRunning()
+
+        let nc = UINavigationController(rootViewController: heatmapViewController)
+        heatmapViewController.preferredContentSize = CGSize(width: view.bounds.width, height: view.bounds.height / 2)
+        nc.preferredContentSize = CGSize(width: view.bounds.width, height: view.bounds.height / 2)
+        nc.modalPresentationStyle = .custom
+        present(nc, animated: true)
     }
 
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
-        guard let imageBuffer = sampleBuffer.imageBuffer else { return }
+        guard let imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else { return }
         let pixelBuffer = imageBuffer as CVPixelBuffer
 
         let handler = VNImageRequestHandler(cvPixelBuffer: pixelBuffer, options: [:])
